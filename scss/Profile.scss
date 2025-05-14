@@ -1,0 +1,39 @@
+
+
+
+
+.profile__inner{
+    padding: 3.125rem 6.25rem;
+}
+
+.profile__title{
+    font-size: 2.5rem;
+    color: black;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.profile__content{
+    -webkit-box-shadow: 0px 1px 5px 2px rgba(0,0,0,0.27); 
+    box-shadow: 0px 1px 5px 2px rgba(0,0,0,0.27);
+    border-radius: 0.625rem;
+    padding: 1.875rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.875rem;
+    margin-bottom: 1.25rem;
+}
+
+.profile__content-name{
+    font-size: 1.5625rem;
+    color: black;
+    font-weight: bold;
+    span{
+        color: gray;
+    }
+}
+
+ .profile__loading{
+    color: rgb(80, 77, 77);
+    font-size: 1.25rem;
+}

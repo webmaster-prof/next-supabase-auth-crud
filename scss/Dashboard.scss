@@ -1,0 +1,140 @@
+
+
+
+.dashboard__inner{
+    padding: 6.25rem 0;
+    display: flex;
+    column-gap: 3.125rem;
+}
+
+.dashboard__form{
+   flex-basis: 30%;
+}
+
+.dashboard__form-title{
+    font-size: 2.1875rem;
+    color: black;
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.dashboard__form-form{
+    display: flex;
+    flex-direction: column;
+    row-gap: 1.25rem;
+}
+
+.dashboard__form-block{
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard__form-label{
+    font-size: 1.25rem;
+    color: rgba(0, 0, 0, 0.598);
+    font-weight: 600;
+    margin-bottom: 1.25rem;
+}
+
+.dashboard__form-input{
+    padding: 0.9375rem;
+    border: none;
+    border-radius: 0.625rem;
+    -webkit-box-shadow: 2px 1px 12px -4px #000000; 
+    box-shadow: 2px 1px 12px -4px #000000;
+}
+
+.dashboard__form-textarea{
+    padding: 1.25rem;
+    border: none;
+    border-radius: 0.625rem;
+    -webkit-box-shadow: 2px 1px 12px -4px #000000; 
+    box-shadow: 2px 1px 12px -4px #000000;
+}
+
+.dashboard__form-image{
+    margin-bottom: 1.25rem;
+}
+
+.dashboard__input-choose{
+    width: 100%;
+    padding: 0.625rem;
+    border: none;
+    border-radius: 0.625rem;
+    -webkit-box-shadow: 2px 1px 12px -4px #000000; 
+    box-shadow: 2px 1px 12px -4px #000000;
+}
+
+.dashboard__form-button{
+    color: white;
+    font-weight: bold;
+    font-size: 1.25rem;
+    border-radius: 0.625rem;
+    padding: 0.75rem 1.25rem;
+    background-color: green;
+}
+
+
+
+
+.dashboard__table{
+    flex-basis: 70%;
+
+    .dashboard__table-title{
+        font-size: 2.1875rem;
+        color: black;
+        font-weight: 600;
+        margin-bottom: 1.25rem;
+    }
+
+    .dashboard__table-table{
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .dashboard__table-thead{
+        background-color: rgba(128, 128, 128, 0.144);
+        th{
+            padding: 0.8125rem 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+    }
+
+    .dashboard__table-tbody{
+        td{
+            padding: 0.8125rem 0.5rem;
+            font-size: 1.25rem;
+        }
+    }
+
+    .dashboard__table-thead th,
+    .dashboard__table-tbody td{
+        border: 2px solid rgba(128, 128, 128, 0.285);
+        text-align: left;
+    }
+
+    .dashboard__table-buttons{
+        display: flex;
+        column-gap: 0.625rem;
+
+        .table-button--edit{
+            background-color: blue;
+        }
+
+        .table-button--delete{
+            background-color: red;
+        }
+    }
+
+    .dashboard__table-button{
+        padding: 0.625rem;
+        color: white;
+        font-size: 1.125rem;
+        font-weight: 600;
+        border-radius: 0.3125rem;
+    }
+
+    .dashboard__table-nofound{
+    }
+}
