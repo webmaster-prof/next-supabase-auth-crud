@@ -31,13 +31,10 @@ export default function Dashboard() {
     setUserId(data.session.user.id)
     localStorage.setItem("access_token", data.session.access_token)
     setIsLoggedIn(true)
-    toast.success("User logged in successfully")
   }
 
   handleLoginSession()
 }, [])
-
-  
 
   return (
     <section className='dashboard'>
