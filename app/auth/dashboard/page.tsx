@@ -14,7 +14,7 @@ export default function Dashboard() {
   const [products, setProducts] = useState<null>(null)
   const [userId, setUserId] = useState<null>(null)
 
-  const {setAuthToken, setIsLoggedIn, isLoggedIn} = myAppHook()
+  const {setAuthToken, setIsLoggedIn, isLoggedIn, setUserProfile} = myAppHook()
 
   const router = useRouter()
 
@@ -30,7 +30,20 @@ export default function Dashboard() {
     setAuthToken(data.session.access_token)
     setUserId(data.session.user.id)
     localStorage.setItem("access_token", data.session.access_token)
+    console.log(data)
     setIsLoggedIn(true)
+    setUserProfile({
+        name: data.session.user?.user_metadata.fullName,
+        email: data.session.user?.user_metadata.email,
+        phone: data.session.user?.user_metadata.phone,
+        gender: data.session.user?.user_metadata.gender,
+    })
+    localStorage.setItem("user_profile", JSON.stringify({
+        name: data.session.user?.user_metadata.fullName,
+        email: data.session.user?.user_metadata.email,
+        phone: data.session.user?.user_metadata.phone,
+        gender: data.session.user?.user_metadata.gender,
+    }))
   }
 
   handleLoginSession()

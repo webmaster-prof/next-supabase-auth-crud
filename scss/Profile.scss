@@ -34,6 +34,11 @@
 }
 
  .profile__loading{
-    color: rgb(80, 77, 77);
-    font-size: 1.25rem;
+    color: red;
+    font-size: 3.4375rem;
+    font-weight: 700;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

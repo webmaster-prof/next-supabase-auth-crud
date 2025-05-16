@@ -18,15 +18,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppUtilsProvider>
-      <div className="wrapper">
-        <Navbar />
-        <main className="main">
-          <Toaster />
-          {children}
-        </main>
-        <Footer />
-      </div>
+      <AppUtilsProvider>
+        <div className="wrapper">
+          <Navbar />
+          <main className="main">
+            <Toaster />
+            {children}
+          </main>
+          <Footer />
+        </div>
       </AppUtilsProvider>
       </body>
     </html>

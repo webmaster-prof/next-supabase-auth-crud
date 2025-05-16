@@ -61,9 +61,10 @@ useEffect(() => {
       if(error){
         toast.error("Invalid login details")
       } else {
-        if (!data.session) {
+        if (data.session) {
           setAuthToken(data.session.access_token)
           localStorage.setItem("access_token", data.session.access_token)
+          console.log(data)
           setIsLoggedIn(true)
         }
         toast.success("User logged in successfully")
