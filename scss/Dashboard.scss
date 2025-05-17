@@ -42,6 +42,13 @@
     border-radius: 0.625rem;
     -webkit-box-shadow: 2px 1px 12px -4px #000000; 
     box-shadow: 2px 1px 12px -4px #000000;
+    margin-bottom: 0.625rem;
+}
+
+.dashboard__form-error{
+    color: red;
+    font-size: 1.25rem;
+    font-style: italic;
 }
 
 .dashboard__form-textarea{
@@ -50,6 +57,7 @@
     border-radius: 0.625rem;
     -webkit-box-shadow: 2px 1px 12px -4px #000000; 
     box-shadow: 2px 1px 12px -4px #000000;
+    margin-bottom: 0.625rem;
 }
 
 .dashboard__form-image{

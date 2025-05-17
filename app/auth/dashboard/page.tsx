@@ -7,16 +7,39 @@ import { supabase } from '@/lib/supabaseClient';
 import { myAppHook } from '@/context/AppUtils';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import * as yup from "yup"
+import { yupResolver } from '@hookform/resolvers/yup';
 
+const formSchema = yup.object().shape({
+  title: yup.string().required("Product title is required"),
+  content: yup.string().required("Description is required"),
+  cost: yup.string().required("Product cost is required"),
+})
+interface ProductType {
+   id?: number
+   title: string
+   content?: string
+   cost?: string
+   banner_image?: string | File | null
+}
 export default function Dashboard() {
 
   const [previewImage, setPreviewImage] = useState<null>(null)
-  const [products, setProducts] = useState<null>(null)
+  const [products, setProducts] = useState<ProductType | null>(null)
   const [userId, setUserId] = useState<null>(null)
-
   const {setAuthToken, setIsLoggedIn, isLoggedIn, setUserProfile} = myAppHook()
-
   const router = useRouter()
+
+  const {
+    register,
+    reset,
+    handleSubmit,
+    setValue,
+    formState: {
+      errors,
+    }
+  } = useForm({resolver: yupResolver(formSchema)})
 
   useEffect(() => {
   const handleLoginSession = async () => {
@@ -45,9 +68,40 @@ export default function Dashboard() {
         gender: data.session.user?.user_metadata.gender,
     }))
   }
-
   handleLoginSession()
 }, [])
+
+
+const uploadImageFile = async (file: File) => {
+     const fileExtension = file.name.split(".").pop()
+     const fileName = `${Date.now()}.${fileExtension}`
+     const {data, error} = await supabase.storage.from("product-images").upload(fileName, file)
+     if(error){
+         toast.error("Failed to upload banner image")
+         return null
+     }
+     return supabase.storage.from("product-images").getPublicUrl(fileName).data.publicUrl
+}
+
+const onFormSubmit = async (formData: any) => {
+     let imagePath = null
+     if(formData.banner_image instanceof File){
+        imagePath = await uploadImageFile(formData.banner_image)
+        if(!imagePath) return
+     }
+     const {data, error} = await supabase.from("products").insert({
+        ...formData,
+        user_id: userId,
+        banner_image: imagePath
+     })
+     if(error){
+      toast.error("Failed to Add Product")
+     } else {
+      toast.success("Successfully Product has been created!")
+     }
+     reset()
+     setPreviewImage(null)
+}
 
   return (
     <section className='dashboard'>
@@ -55,28 +109,41 @@ export default function Dashboard() {
         <div className="dashboard__inner">
           <div className="dashboard__form">
             <h1 className='dashboard__form-title'>Add Product</h1>
-            <form className='dashboard__form-form'>
+            <form className='dashboard__form-form' onSubmit={handleSubmit(onFormSubmit)}>
               <div className="dashboard__form-block">
                 <label className='dashboard__form-label'>Title</label>
-                <input type="text" className='dashboard__form-input'/>
+                <input type="text" className='dashboard__form-input' {...register("title")}/>
+                <span className='dashboard__form-error'>{errors.title?.message}</span>
               </div>
               <div className="dashboard__form-block">
                 <label className='dashboard__form-label'>Content</label>
-                <textarea className='dashboard__form-textarea'/>
+                <textarea className='dashboard__form-textarea' {...register("content")}/>
+                <span className='dashboard__form-error'>{errors.content?.message}</span>
               </div>
               <div className="dashboard__form-block">
                 <label className='dashboard__form-label'>Cost</label>
-                <input type="text" className='dashboard__form-input'/>
+                <input type="text" className='dashboard__form-input' {...register("cost")}/>
+                <span className='dashboard__form-error'>{errors.cost?.message}</span>
               </div>
               <div className="dashboard__form-block">
                 <label className='dashboard__form-label'>Banner Image</label>
+                <span className='dashboard__form-error'></span>
                 <div className="dashboard__form-image">
                   {previewImage ? 
-                    (<Image src="" width={50} height={50} alt='Previed' id="bannerPreview"/>) : ("")
+                    (<Image src={previewImage} width={100} height={100} alt='Previed' id="bannerPreview"/>) : ("")
                   }
                 </div>
                 <div className="dashboard__form-choose">
-                  <input type="file" className='dashboard__input-choose' placeholder='Choose File'/>
+                  <input 
+                    type="file" 
+                    onChange={(e) => {
+                      setValue("banner_image", e.target.files[0]); 
+                      setPreviewImage(URL.createObjectURL(e.target.files[0]));
+                    }}
+                    className='dashboard__input-choose' 
+                    placeholder='Choose File'
+                  />
+                  <span className='dashboard__form-error'></span>
                 </div>
               </div>
               <button className="dashboard__form-button" type='submit'>Add Product</button>
