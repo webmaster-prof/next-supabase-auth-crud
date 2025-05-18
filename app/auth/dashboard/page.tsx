@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [previewImage, setPreviewImage] = useState<null>(null)
   const [products, setProducts] = useState<ProductType[]>([])
   const [userId, setUserId] = useState<null>(null)
+  const [editId, setEditId] = useState(null)
   const {setAuthToken, setIsLoggedIn, isLoggedIn, setUserProfile} = myAppHook()
   const router = useRouter()
 
@@ -85,23 +86,39 @@ const uploadImageFile = async (file: File) => {
 }
 
 const onFormSubmit = async (formData: any) => {
-     let imagePath = null
+     let imagePath = formData.banner_image
      if(formData.banner_image instanceof File){
         imagePath = await uploadImageFile(formData.banner_image)
         if(!imagePath) return
      }
-     const {data, error} = await supabase.from("products").insert({
-        ...formData,
-        user_id: userId,
-        banner_image: imagePath
-     })
-     if(error){
-      toast.error("Failed to Add Product")
+     if(editId){
+        const {data, error} = await supabase.from("products").update({
+          ...formData,
+          banner_image: imagePath
+        }).match({
+            id: editId,
+            user_id: userId,
+        })
+        if(error){
+          toast.error("Failed to update product data")
+        } else {
+          toast.success("Product has been updated successfully")
+        }
      } else {
-      toast.success("Successfully Product has been created!")
+        const {data, error} = await supabase.from("products").insert({
+          ...formData,
+          user_id: userId,
+          banner_image: imagePath
+        })
+        if(error){
+          toast.error("Failed to Add Product")
+        } else {
+          toast.success("Successfully Product has been created!")
+        }
      }
      reset()
      setPreviewImage(null)
+     fetchProductFromTable(userId)
 }
 
  const fetchProductFromTable = async (userId: string) => {
@@ -111,12 +128,22 @@ const onFormSubmit = async (formData: any) => {
     }
  }
 
+ const handleEditData = (product: ProductType) => {
+     console.log(product)
+     setValue("title", product.title)
+     setValue("content", product.content)
+     setValue("cost", product.cost)
+     setValue("banner_image", product.banner_image)
+     setPreviewImage(product.banner_image)
+     setEditId(product.id)
+ }
+
   return (
     <section className='dashboard'>
       <div className="container">
         <div className="dashboard__inner">
           <div className="dashboard__form">
-            <h1 className='dashboard__form-title'>Add Product</h1>
+            <h1 className='dashboard__form-title'>{editId ? "Edit Product" : "Add Product"}</h1>
             <form className='dashboard__form-form' onSubmit={handleSubmit(onFormSubmit)}>
               <div className="dashboard__form-block">
                 <label className='dashboard__form-label'>Title</label>
@@ -154,7 +181,7 @@ const onFormSubmit = async (formData: any) => {
                   <span className='dashboard__form-error'></span>
                 </div>
               </div>
-              <button className="dashboard__form-button" type='submit'>Add Product</button>
+              <button className="dashboard__form-button" type='submit'>{editId ? "Update Product" : "Add Product"}</button>
             </form>
           </div>
           <div className="dashboard__table">
@@ -170,23 +197,29 @@ const onFormSubmit = async (formData: any) => {
                     </tr>
                   </thead>
                   <tbody className='dashboard__table-tbody'>
-                    {products.length > 0 ? products.map((singleProduct, index) => (
+                    {products.length > 0 ? products.map((singleProduct, index) => 
                       <tr key={index}>
                           <td>{singleProduct.title}</td>
                           <td>{singleProduct.content}</td>
                           <td>${singleProduct.cost}</td>
                           <td>
                             {singleProduct.banner_image ? (
-                              <Image src={singleProduct.banner_image} width={50} height={50}  alt="Sample product"/>) : ("--")}
+                              <Image src={singleProduct.banner_image} width={50} height={50}  alt="Sample product"/>) : ("--")
+                            }
                           </td>
                           <td>
                             <div className='dashboard__table-buttons'>
-                                <button className='dashboard__table-button table-button--edit'>Edit</button>
-                                <button className='dashboard__table-button table-button--delete'>Delete</button>
+                              <button 
+                                className='dashboard__table-button table-button--edit'
+                                onClick={() => handleEditData(singleProduct)}
+                              >
+                                Edit
+                                </button>
+                              <button className='dashboard__table-button table-button--delete'>Delete</button>
                             </div>
                           </td>
                       </tr>
-                      )) : (
+                      ) : (
                       <tr>
                         <td className='dashboard__table-nofound' colSpan="5" style={{textAlign: "center"}}>No products found</td>
                       </tr>
