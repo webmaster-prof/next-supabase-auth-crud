@@ -26,7 +26,7 @@ interface ProductType {
 export default function Dashboard() {
 
   const [previewImage, setPreviewImage] = useState<null>(null)
-  const [products, setProducts] = useState<ProductType | null>(null)
+  const [products, setProducts] = useState<ProductType[]>([])
   const [userId, setUserId] = useState<null>(null)
   const {setAuthToken, setIsLoggedIn, isLoggedIn, setUserProfile} = myAppHook()
   const router = useRouter()
@@ -67,6 +67,7 @@ export default function Dashboard() {
         phone: data.session.user?.user_metadata.phone,
         gender: data.session.user?.user_metadata.gender,
     }))
+    fetchProductFromTable(data.session.user.id)
   }
   handleLoginSession()
 }, [])
@@ -102,6 +103,13 @@ const onFormSubmit = async (formData: any) => {
      reset()
      setPreviewImage(null)
 }
+
+ const fetchProductFromTable = async (userId: string) => {
+    const {data, error} = await supabase.from("products").select("*").eq("user_id", userId)
+    if(data){
+      setProducts(data)
+    }
+ }
 
   return (
     <section className='dashboard'>
@@ -162,23 +170,26 @@ const onFormSubmit = async (formData: any) => {
                     </tr>
                   </thead>
                   <tbody className='dashboard__table-tbody'>
-                    {products ? (
+                    {products.length > 0 ? products.map((singleProduct, index) => (
+                      <tr key={index}>
+                          <td>{singleProduct.title}</td>
+                          <td>{singleProduct.content}</td>
+                          <td>${singleProduct.cost}</td>
+                          <td>
+                            {singleProduct.banner_image ? (
+                              <Image src={singleProduct.banner_image} width={50} height={50}  alt="Sample product"/>) : ("--")}
+                          </td>
+                          <td>
+                            <div className='dashboard__table-buttons'>
+                                <button className='dashboard__table-button table-button--edit'>Edit</button>
+                                <button className='dashboard__table-button table-button--delete'>Delete</button>
+                            </div>
+                          </td>
+                      </tr>
+                      )) : (
                       <tr>
-                      <td>Sample Product</td>
-                      <td>Sample Content</td>
-                      <td>$100</td>
-                      <td><Image src="" alt="Sample product"/></td>
-                      <td>
-                         <div className='dashboard__table-buttons'>
-                             <button className='dashboard__table-button table-button--edit'>Edit</button>
-                             <button className='dashboard__table-button table-button--delete'>Delete</button>
-                         </div>
-                      </td>
-                    </tr>
-                    ) : (
-                          <tr>
-                      <td className='dashboard__table-nofound' colSpan="5" style={{textAlign: "center"}}>No products found</td>
-                    </tr>
+                        <td className='dashboard__table-nofound' colSpan="5" style={{textAlign: "center"}}>No products found</td>
+                      </tr>
                     )}
                   </tbody>
                 </table>

@@ -26,7 +26,7 @@ const Navbar = () => {
       <header className="header">
             <div className="container">
                  <div className="header__inner">
-                    <h2 className='header__logo'>SupaNext</h2>
+                    <Link href="/"><h2 className='header__logo'>SupaNext</h2></Link>
                     {isLoggedIn ? (
                       <ul className='header__list'>
                         <Link href="/auth/dashboard"><li className='header__list-item'><span className='header__list-link'>Dashboard</span></li></Link>
