@@ -30,7 +30,7 @@ export default function Dashboard() {
   const [products, setProducts] = useState<ProductType[]>([])
   const [userId, setUserId] = useState<null>(null)
   const [editId, setEditId] = useState(null)
-  const {setAuthToken, setIsLoggedIn, isLoggedIn, setUserProfile} = myAppHook()
+  const {setAuthToken, setIsLoggedIn, isLoggedIn, setUserProfile, setIsLoading} = myAppHook()
   const router = useRouter()
 
   const {
@@ -44,34 +44,33 @@ export default function Dashboard() {
   } = useForm({resolver: yupResolver(formSchema)})
 
   useEffect(() => {
-  const handleLoginSession = async () => {
-    const { data, error } = await supabase.auth.getSession()
-
-    if (error || !data.session) {
-      toast.error("Failed to get user session")
-      router.push('/auth/login')
-      return
+    const handleLoginSession = async () => {
+      const { data, error } = await supabase.auth.getSession()
+      if (error || !data.session) {
+        toast.error("Failed to get user session")
+        router.push('/auth/login')
+        return
+      }
+      setAuthToken(data.session.access_token)
+      setUserId(data.session.user.id)
+      localStorage.setItem("access_token", data.session.access_token)
+      console.log(data)
+      setIsLoggedIn(true)
+      setUserProfile({
+          name: data.session.user?.user_metadata.fullName,
+          email: data.session.user?.user_metadata.email,
+          phone: data.session.user?.user_metadata.phone,
+          gender: data.session.user?.user_metadata.gender,
+      })
+      localStorage.setItem("user_profile", JSON.stringify({
+          name: data.session.user?.user_metadata.fullName,
+          email: data.session.user?.user_metadata.email,
+          phone: data.session.user?.user_metadata.phone,
+          gender: data.session.user?.user_metadata.gender,
+      }))
+      fetchProductFromTable(data.session.user.id)
     }
-    setAuthToken(data.session.access_token)
-    setUserId(data.session.user.id)
-    localStorage.setItem("access_token", data.session.access_token)
-    console.log(data)
-    setIsLoggedIn(true)
-    setUserProfile({
-        name: data.session.user?.user_metadata.fullName,
-        email: data.session.user?.user_metadata.email,
-        phone: data.session.user?.user_metadata.phone,
-        gender: data.session.user?.user_metadata.gender,
-    })
-    localStorage.setItem("user_profile", JSON.stringify({
-        name: data.session.user?.user_metadata.fullName,
-        email: data.session.user?.user_metadata.email,
-        phone: data.session.user?.user_metadata.phone,
-        gender: data.session.user?.user_metadata.gender,
-    }))
-    fetchProductFromTable(data.session.user.id)
-  }
-  handleLoginSession()
+    handleLoginSession()
 }, [])
 
 
@@ -87,6 +86,7 @@ const uploadImageFile = async (file: File) => {
 }
 
 const onFormSubmit = async (formData: any) => {
+     setIsLoading(true)
      let imagePath = formData.banner_image
      if(formData.banner_image instanceof File){
         imagePath = await uploadImageFile(formData.banner_image)
@@ -120,7 +120,8 @@ const onFormSubmit = async (formData: any) => {
      }
      reset()
      setPreviewImage(null)
-     fetchProductFromTable(userId)
+     fetchProductFromTable(userId!)
+     setIsLoading(false)
 }
 
  const fetchProductFromTable = async (userId: string) => {
@@ -137,7 +138,7 @@ const onFormSubmit = async (formData: any) => {
      setValue("cost", product.cost)
      setValue("banner_image", product.banner_image)
      setPreviewImage(product.banner_image)
-     setEditId(product.id)
+     setEditId(product.id!)
  }
 
  const handleDeleteProduct = (id: number) => {

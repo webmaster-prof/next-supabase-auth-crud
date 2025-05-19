@@ -1,5 +1,6 @@
 'use client';
 
+import Loader from "@/components/Loader";
 import React, { useEffect } from "react";
 import { createContext, ReactNode, useContext, useState } from "react";
 
@@ -9,6 +10,7 @@ interface AppUtilsType {
     setAuthToken: (state: null) => void
     userFrofile: null
     setUserProfile: (state: null) => void
+    setIsLoading: (state: boolean) => void
 }
 
 const AppUtilsContext = createContext<AppUtilsType | undefined>(undefined)
@@ -18,6 +20,7 @@ export const AppUtilsProvider = ({children}: {children: React.ReactNode}) => {
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
     const [authToken, setAuthToken] = useState<null | string>(null)
     const [userFrofile, setUserProfile] = useState<null>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
          const token = localStorage.getItem("access_token")
@@ -39,9 +42,10 @@ export const AppUtilsProvider = ({children}: {children: React.ReactNode}) => {
            setAuthToken,
            userFrofile,
            setUserProfile,
+           setIsLoading,
        }}
     >
-        {children}
+        {isLoading ? <Loader/> : children}
     </AppUtilsContext.Provider>
     )
 }
