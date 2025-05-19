@@ -8,9 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { supabase } from '@/lib/supabaseClient';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-
-
-// type RegisterFormData = yup.InferType<typeof formSchema>;
+import { myAppHook } from '@/context/AppUtils';
 
 const formSchema = yup.object().shape({
   fullName: yup.string().required("Full Name is required"),
@@ -23,7 +21,7 @@ const formSchema = yup.object().shape({
 
 
 export default function Register() {
-
+ const {setIsLoading} = myAppHook()
  const router = useRouter()
 
  const {
@@ -37,7 +35,7 @@ export default function Register() {
  })
 
  const onSubmit = async (formdata: any) => {
-    //  console.log(formdata)
+  setIsLoading(true)
     const {fullName, email, phone, gender, password} = formdata
     const {data, error} = await supabase.auth.signUp({
         email,
@@ -54,9 +52,14 @@ export default function Register() {
       toast.error("Failed to register user")
     } else {
       toast.success("User registered successfully")
+      setIsLoading(false)
       router.push("/auth/login")
     }
  }
+
+  const handleLoginRedirect = () => {
+    router.push("/auth/login")
+  }
 
 
   return (
@@ -103,7 +106,7 @@ export default function Register() {
             </form>
             <div className="register__register">
                 <p>Already have an account?</p>
-                <Link href="/auth/login"><span>Login</span></Link>
+                <a href="#" onClick={handleLoginRedirect}><span>Login</span></a>
             </div>
         </div>
       </div>

@@ -1,7 +1,5 @@
 'use client';
 
-
-import Link from 'next/link'
 import './../../../scss/Login.scss'
 import { supabase } from '@/lib/supabaseClient'
 import toast from 'react-hot-toast'
@@ -21,7 +19,7 @@ const formSchema = yup.object().shape({
 export default function Login() {
 
 const router = useRouter()
-const {isLoggedIn, setIsLoggedIn, setAuthToken} = myAppHook()
+const {isLoggedIn, setIsLoggedIn, setAuthToken, setIsLoading} = myAppHook()
 
 const {
   register,
@@ -52,6 +50,7 @@ useEffect(() => {
   }
 
   const onSubmit = async (formdata: any) => {
+      setIsLoading(true)
       const {email, password} = formdata
       const {data, error} = await supabase.auth.signInWithPassword({
         email,
@@ -66,10 +65,15 @@ useEffect(() => {
           localStorage.setItem("access_token", data.session.access_token)
           console.log(data)
           setIsLoggedIn(true)
+          setIsLoading(false)
         }
         toast.success("User logged in successfully")
         router.push("/auth/dashboard")
       }
+  }
+
+  const handleRegisterRedirect = () => {
+    router.push("/auth/register")
   }
 
 
@@ -108,7 +112,7 @@ useEffect(() => {
             </div>
             <div className="login__register">
                 <p>Dont have an accounts?</p>
-                <Link href="/auth/register"><span>Register</span></Link>
+                <a href="#" onClick={handleRegisterRedirect}><span>Register</span></a>
             </div>
         </div>
       </div>
