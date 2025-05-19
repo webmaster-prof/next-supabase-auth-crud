@@ -1,7 +1,12 @@
+"use client";
 
+import { useRouter } from "next/navigation";
 import "./../scss/Home.scss"
 
 export default function Home() {
+
+ const router = useRouter()
+
   return (
     <section className="home">
         <div className="container">
@@ -9,7 +14,7 @@ export default function Home() {
                 <div className="home__top">
                     <h1 className="home__top-title">Welcome to SupaNext</h1>
                     <p className="home__top-text">A powerful Next.js application with Supabase integration</p>
-                    <button className="home__top-button">Get Started</button>
+                    <button className="home__top-button" onClick={() => router.push("/auth/dashboard")}>Get Started</button>
                 </div>
                 <div className="home__content">
                   <div className="home__content-items">

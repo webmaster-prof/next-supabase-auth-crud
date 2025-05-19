@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as yup from "yup"
 import { yupResolver } from '@hookform/resolvers/yup';
+import Swal from 'sweetalert2';
 
 const formSchema = yup.object().shape({
   title: yup.string().required("Product title is required"),
@@ -103,6 +104,7 @@ const onFormSubmit = async (formData: any) => {
           toast.error("Failed to update product data")
         } else {
           toast.success("Product has been updated successfully")
+          setEditId(null)
         }
      } else {
         const {data, error} = await supabase.from("products").insert({
@@ -136,6 +138,31 @@ const onFormSubmit = async (formData: any) => {
      setValue("banner_image", product.banner_image)
      setPreviewImage(product.banner_image)
      setEditId(product.id)
+ }
+
+ const handleDeleteProduct = (id: number) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then( async (result) => {
+      if (result.isConfirmed) {
+        const {data, error} =  await supabase.from("products").delete().match({
+            id: id,
+            user_id: userId,
+        })
+        if(error){
+            toast.error("Failed to delete product")
+          } else {
+            toast.success("Product deleted successfully")
+            fetchProductFromTable(userId!)
+        }
+      }
+    });
  }
 
   return (
@@ -215,7 +242,12 @@ const onFormSubmit = async (formData: any) => {
                               >
                                 Edit
                                 </button>
-                              <button className='dashboard__table-button table-button--delete'>Delete</button>
+                              <button 
+                                className='dashboard__table-button table-button--delete'
+                                onClick={() => handleDeleteProduct(singleProduct.id!)}
+                              >
+                                Delete
+                              </button>
                             </div>
                           </td>
                       </tr>
