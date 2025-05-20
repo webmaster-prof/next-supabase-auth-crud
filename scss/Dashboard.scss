@@ -5,6 +5,11 @@
     padding: 6.25rem 0;
     display: flex;
     column-gap: 3.125rem;
+    @media (max-width: 1000px){
+        flex-direction: column;
+        row-gap: 3.125rem;
+        padding: 3.125rem 0;
+    }
 }
 
 .dashboard__form{
@@ -83,16 +88,24 @@
 }
 
 
-
-
 .dashboard__table{
     flex-basis: 70%;
+      @media (max-width: 767.98px){
+           overflow-x: auto;
+           display: block;
+           white-space: nowrap;
+      }
 
     .dashboard__table-title{
         font-size: 2.1875rem;
         color: black;
         font-weight: 600;
         margin-bottom: 1.25rem;
+         @media (max-width: 767.98px){
+            position: sticky;
+            top: 0;
+            left: 0;
+      }
     }
 
     .dashboard__table-table{

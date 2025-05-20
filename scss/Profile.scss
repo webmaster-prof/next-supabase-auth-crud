@@ -4,6 +4,9 @@
 
 .profile__inner{
     padding: 3.125rem 6.25rem;
+     @media (max-width: 700px){
+       padding: 1.875rem 0;
+    }
 }
 
 .profile__title{
@@ -31,6 +34,9 @@
     span{
         color: gray;
     }
+     @media (max-width: 340px){
+        font-size: 1.25rem;
+    }
 }
 
  .profile__loading{
@@ -41,4 +47,5 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    text-align: center;
 }
